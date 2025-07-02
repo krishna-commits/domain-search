@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import whois from 'whois-json';
 import SSLVerifier from 'ssl-verifier';
-import { parseDomainDetails, extractHostnames, checkDNSSEC } from '@/app/utils/domainUtils';
+import { parseDomainDetails, checkDNSSEC } from '@/app/utils/domainUtils';
 import { analyzeSecurityHeaders, checkSecurityProtocols } from '@/app/utils/securityUtils';
 import { detectTechStack } from '@/app/utils/techDetect';
 import fetch, { Headers } from 'node-fetch';
@@ -27,9 +27,9 @@ async function multiResolverLookup(domain: string, type: string) {
       if (resolver) dns.setServers([resolver]);
       else dns.setServers(originalServers);
       const recordsRaw = await dns.resolve(domain, type);
-      const records: any[] = Array.isArray(recordsRaw) ? recordsRaw : [recordsRaw];
-      records.forEach((r: any) => results.add(JSON.stringify(r)));
-    } catch (e) {
+      const records: unknown[] = Array.isArray(recordsRaw) ? recordsRaw : [recordsRaw];
+      records.forEach((r: unknown) => results.add(JSON.stringify(r)));
+    } catch {
       // Ignore errors, try next resolver
     }
   }
@@ -55,7 +55,7 @@ async function fetchFromGoogleDNS(domain: string, type: string) {
 
 // Unified DNS record fetcher
 async function getDNSRecords(domain: string, type: string) {
-  let records: any[] = await multiResolverLookup(domain, type);
+  let records: unknown[] = await multiResolverLookup(domain, type);
   if (!records.length) {
     records = await fetchFromGoogleDNS(domain, type);
   }
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
 
     // --- PARALLEL NETWORK REQUESTS ---
     // Helper for timeout
-    const withTimeout = async (promise: Promise<any>, ms: number, fallback: any) => {
+    const withTimeout = async (promise: Promise<unknown>, ms: number, fallback: unknown) => {
       return Promise.race([
         promise,
         delay(ms).then(() => fallback)
@@ -232,19 +232,24 @@ export async function GET(request: Request) {
     };
 
     // Security headers analysis
-    const securityHeaders = analyzeSecurityHeaders(homepage.responseHeaders);
+    const securityHeaders = analyzeSecurityHeaders((homepage as { responseHeaders: any }).responseHeaders);
     // Security protocols
     const securityProtocols = checkSecurityProtocols(
-      sslInfo.protocol,
-      sslInfo.ciphers ? sslInfo.ciphers.map((c: any) => c.name) : []
+      (sslInfo as { protocol: any; ciphers?: any[] }).protocol,
+      (sslInfo as { ciphers?: any[] }).ciphers ? (sslInfo as { ciphers: any[] }).ciphers.map((c: any) => c.name) : []
     );
     // Technology stack detection
-    const techStack = detectTechStack(homepage.responseHeaders, homepage.html);
+    const techStack = detectTechStack((homepage as { responseHeaders: any; html: string }).responseHeaders, (homepage as { html: string }).html);
 
     // --- EMAIL EXTRACTION ---
     const foundEmails = new Set<string>();
     // 1. WHOIS
-    [whoisDataRaw?.registrantEmail, whoisDataRaw?.adminEmail, whoisDataRaw?.techEmail, whoisDataRaw?.email].forEach(e => {
+    [
+      (whoisDataRaw as { registrantEmail?: string })?.registrantEmail,
+      (whoisDataRaw as { adminEmail?: string })?.adminEmail,
+      (whoisDataRaw as { techEmail?: string })?.techEmail,
+      (whoisDataRaw as { email?: string })?.email
+    ].forEach(e => {
       if (e) extractEmails(e).forEach(em => foundEmails.add(em));
     });
     // 2. DNS TXT/SPF
@@ -259,18 +264,18 @@ export async function GET(request: Request) {
       });
     }
     // 3. Homepage HTML
-    if (homepage.html) {
-      extractEmails(homepage.html).forEach(em => foundEmails.add(em));
+    if ((homepage as { html?: string }).html) {
+      extractEmails((homepage as { html: string }).html).forEach(em => foundEmails.add(em));
     }
     const emailResults = Array.from(foundEmails);
 
     // Broken links check (homepage only, can be slow, so run after main awaits)
     let brokenLinks: any[] = [];
-    if (homepage.html) {
-      const linkRegex = /<a [^>]*href=['"]([^'">]+)['"][^>]*>/gi;
+    if ((homepage as { html?: string }).html) {
+      const linkRegex = /<a [^>]*href=['"]([^'"]+)['"][^>]*>/gi;
       let match;
       const linkChecks: Promise<any>[] = [];
-      while ((match = linkRegex.exec(homepage.html)) !== null) {
+      while ((match = linkRegex.exec((homepage as { html: string }).html)) !== null) {
         const url = match[1];
         try {
           const absoluteUrl = new URL(url, `https://${domainDetails.hostname}`).href;
@@ -302,7 +307,7 @@ export async function GET(request: Request) {
       try {
         const reverse = await withTimeout(dns.reverse(ip), 2000, []);
         try {
-          const shodanRes = await withTimeout(fetch(`https://internetdb.shodan.io/host/${ip}`), 2000, { ok: false });
+          const shodanRes = await withTimeout(fetch(`https://internetdb.shodan.io/host/${ip}`), 2000, { ok: false }) as Response;
           const shodanData = shodanRes.ok ? await shodanRes.json() : null;
           ipServices.push({
             ip,
@@ -342,9 +347,9 @@ export async function GET(request: Request) {
       emails: emailResults
     });
     
-  } catch (error: any) {
-    console.error('Domain API error:', error, error?.stack);
-    const errorMessage = error.message || 'Failed to fetch domain data';
+  } catch (error: unknown) {
+    console.error('Domain API error:', error, (error as any)?.stack);
+    const errorMessage = (error as any).message || 'Failed to fetch domain data';
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
