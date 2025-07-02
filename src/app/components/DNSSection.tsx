@@ -65,7 +65,7 @@ async function fetchFromGoogleDNS(domain: string, type: string) {
   if (!res.ok) return [];
   const data = await res.json();
   if (!data.Answer) return [];
-  return data.Answer.map(ans => ans.data);
+  return data.Answer.map((ans: { name: string; type: number; TTL: number; data: string }) => ans.data);
 }
 
 async function getDNSRecords(domain: string, type: string) {
