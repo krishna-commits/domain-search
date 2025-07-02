@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   value: { marginBottom: 4 },
   list: { marginLeft: 12, marginBottom: 4 },
   item: { marginBottom: 2 },
-  table: { display: 'table', width: 'auto', marginBottom: 8 },
+  table: { flexDirection: 'row', width: 'auto', marginBottom: 8 },
   tableRow: { flexDirection: 'row' },
   tableCell: { flex: 1, padding: 2, border: '1px solid #eee' },
   header: { position: 'absolute', top: 12, left: 24, right: 24, textAlign: 'center', fontSize: 10, color: '#888' },
