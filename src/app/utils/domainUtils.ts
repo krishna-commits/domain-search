@@ -9,7 +9,7 @@ export const parseDomainDetails = (domain: string) => {
     domain: result.domain || domain,
     subdomain: result.subdomain || '',
     publicSuffix: result.publicSuffix || '',
-    topLevelDomain: result.topLevelDomains?.join(', ') || '',
+    topLevelDomain: result.publicSuffix || '',
     isIcann: result.isIcann,
     isPrivate: result.isPrivate,
     hostname: result.hostname || domain
