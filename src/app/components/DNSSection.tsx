@@ -59,23 +59,6 @@ const resolvers = [
   '9.9.9.9', // Quad9
 ];
 
-async function multiResolverLookup(domain: string, type: string) {
-  const originalServers = dns.getServers();
-  const results = new Set();
-  for (const resolver of resolvers) {
-    try {
-      if (resolver) dns.setServers([resolver]);
-      else dns.setServers(originalServers);
-      const records = await dns.resolve(domain, type);
-      records.forEach(r => results.add(JSON.stringify(r)));
-    } catch (e) {
-      // Ignore errors, try next resolver
-    }
-  }
-  dns.setServers(originalServers); // Restore
-  return Array.from(results).map(r => JSON.parse(r));
-}
-
 async function fetchFromGoogleDNS(domain: string, type: string) {
   const url = `https://dns.google/resolve?name=${domain}&type=${type}`;
   const res = await fetch(url);
@@ -86,11 +69,7 @@ async function fetchFromGoogleDNS(domain: string, type: string) {
 }
 
 async function getDNSRecords(domain: string, type: string) {
-  let records = await multiResolverLookup(domain, type);
-  if (!records.length) {
-    records = await fetchFromGoogleDNS(domain, type);
-  }
-  return records;
+  return await fetchFromGoogleDNS(domain, type);
 }
 
 export default function DNSSection({ dns, dnssec, rawDns }: DNSSectionProps) {
