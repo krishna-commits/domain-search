@@ -360,7 +360,7 @@ export async function GET(request: Request) {
       enumerateSubdomains(domain),
       10000,
       []
-    );
+    ) as string[];
     const subdomainAnalysis = analyzeSubdomains(enhancedSubdomains, domain);
 
     // Certificate Chain Analysis
@@ -404,7 +404,7 @@ export async function GET(request: Request) {
         deepCrawl(domainDetails.hostname, 20, 2),
         15000,
         []
-      );
+      ) as any[];
       const crawlAnalysis = crawlResults.length > 0 ? analyzeCrawlResults(crawlResults) : null;
 
       // Information Gathering
@@ -413,7 +413,7 @@ export async function GET(request: Request) {
       const commonFiles = await withTimeout(checkCommonFiles(domainDetails.hostname), 10000, { checked: 0, found: 0, files: [], riskLevel: 'low' });
       const apiEndpoints = discoverAPIEndpoints(domainDetails.hostname, (homepage as { html?: string }).html || '');
       const socialMedia = extractSocialMedia((homepage as { html?: string }).html || '');
-      const websiteStructure = crawlResults.length > 0 ? analyzeWebsiteStructure(crawlResults) : null;
+      const websiteStructure = crawlResults.length > 0 ? analyzeWebsiteStructure(crawlResults as any[]) : null;
       const exposedInfo = checkExposedInformation((homepage as { html?: string }).html || '', (homepage as { responseHeaders: any }).responseHeaders);
 
       // Technology Fingerprinting
