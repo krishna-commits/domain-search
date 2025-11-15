@@ -18,11 +18,11 @@ export async function checkRobotsTxt(domain: string) {
         found: false,
         content: null,
         analysis: {
-          userAgents: [],
-          disallowed: [],
-          allowed: [],
-          sitemaps: [],
-          issues: [],
+          userAgents: [] as string[],
+          disallowed: [] as Array<{ userAgent: string; path: string }>,
+          allowed: [] as Array<{ userAgent: string; path: string }>,
+          sitemaps: [] as string[],
+          issues: [] as string[],
         },
       };
     }
@@ -56,8 +56,8 @@ export async function checkRobotsTxt(domain: string) {
 function parseRobotsTxt(content: string) {
   const analysis = {
     userAgents: [] as string[],
-    disallowed: [] as string[],
-    allowed: [] as string[],
+    disallowed: [] as Array<{ userAgent: string; path: string }>,
+    allowed: [] as Array<{ userAgent: string; path: string }>,
     sitemaps: [] as string[],
     issues: [] as string[],
   };
