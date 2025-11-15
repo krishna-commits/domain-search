@@ -287,7 +287,7 @@ export async function GET(request: Request) {
     );
 
     // Await all in parallel
-    const [whoisDataRaw, rawDns, dnssec, sslInfo, homepage, uniqueSubdomains, urlhausData, vulnerabilitiesRaw] = await Promise.all([
+    const [whoisDataRaw, rawDns, dnssec, sslInfoRaw, homepage, uniqueSubdomains, urlhausData, vulnerabilitiesRaw] = await Promise.all([
       whoisPromise,
       dnsPromise,
       dnssecPromise,
@@ -298,7 +298,8 @@ export async function GET(request: Request) {
       vulnPromise
     ]);
     
-    // Type assertion for vulnerabilities
+    // Type assertions
+    const sslInfo = (sslInfoRaw as any) || { valid: false, error: 'SSL information unavailable', chain: [] };
     const vulnerabilities = (vulnerabilitiesRaw as any[]) || [];
 
     // DNS records (summary)
