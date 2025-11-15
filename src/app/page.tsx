@@ -174,8 +174,7 @@ export default function Home() {
       const progressInterval = setInterval(() => {
         const currentStepIndex = steps.findIndex(s => s.status === 'in-progress' || s.status === 'pending');
         if (currentStepIndex >= 0 && currentStepIndex < steps.length) {
-          const currentStep = steps[currentStepIndex];
-          if (!currentStep) return;
+          const currentStep = steps[currentStepIndex] as ScanStep;
           if (currentStep.status === 'pending') {
             updateProgress(currentStepIndex, 10);
           } else if (currentStep.progress < 90) {
@@ -253,7 +252,7 @@ export default function Home() {
     { id: 'performance', label: 'Performance', icon: '⚡' },
     { id: 'compliance', label: 'Compliance', icon: '✅' },
     { id: 'advanced', label: 'Advanced', icon: '🔬' },
-  ] as const;
+  ];
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950/20 transition-colors duration-500">
