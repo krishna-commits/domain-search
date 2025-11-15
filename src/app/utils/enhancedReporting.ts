@@ -280,16 +280,16 @@ export function generateEnhancedExecutiveReport(
     },
     trends: {
       securityScore: {
-        trend: ('summary' in trends && trends.summary?.trend) || trends.securityScore?.trend || 'stable',
-        change: ('summary' in trends && trends.summary?.changePercentage) || trends.securityScore?.change || 0,
+        trend: ('summary' in trends && trends.summary?.trend) || ('securityScore' in trends && trends.securityScore?.trend) || 'stable',
+        change: ('summary' in trends && trends.summary?.changePercentage) || ('securityScore' in trends && trends.securityScore?.change) || 0,
       },
       vulnerabilities: {
-        trend: trends.vulnerabilities?.trend || 'stable',
-        change: trends.vulnerabilities?.change || 0,
+        trend: ('vulnerabilities' in trends && trends.vulnerabilities?.trend) || 'stable',
+        change: ('vulnerabilities' in trends && trends.vulnerabilities?.change) || 0,
       },
       performance: {
-        trend: trends.performance?.trend || 'stable',
-        change: trends.performance?.change || 0,
+        trend: ('performance' in trends && trends.performance?.trend) || 'stable',
+        change: ('performance' in trends && trends.performance?.change) || 0,
       },
     },
     recommendations: recommendations.slice(0, 20), // Limit to top 20
