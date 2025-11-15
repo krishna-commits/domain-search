@@ -237,9 +237,9 @@ export async function scanSharePoint(hostname: string, html: string, headers: He
   }
 
   // Extract version
-  const versionMatch = headers.get('MicrosoftSharePointTeamServices') ||
-                      html.match(/SharePoint ([\d.]+)/i);
-  const version = versionMatch || null;
+  const headerVersion = headers.get('MicrosoftSharePointTeamServices');
+  const htmlVersionMatch = html.match(/SharePoint ([\d.]+)/i);
+  const version = headerVersion || (htmlVersionMatch ? htmlVersionMatch[1] : null);
 
   // Extract features
   const features: string[] = [];
