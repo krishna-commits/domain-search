@@ -77,7 +77,7 @@ type ScanStepStatus = 'pending' | 'in-progress' | 'completed' | 'error';
 type ScanStep = {
   name: string;
   status: ScanStepStatus;
-  progress?: number;
+  progress: number;
   data?: any;
 };
 
