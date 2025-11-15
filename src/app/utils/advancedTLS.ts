@@ -240,7 +240,7 @@ function classifyCipherStrength(cipherName: string): 'weak' | 'medium' | 'strong
  */
 function analyzeTLSConfiguration(
   tlsVersions: any,
-  cipherSuites: Array<{ secure: boolean; strength: string }>
+  cipherSuites: Array<{ name: string; secure: boolean; strength: string }>
 ): {
   preferredVersion: string;
   preferredCipher: string;
