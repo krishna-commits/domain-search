@@ -621,7 +621,7 @@ export async function GET(request: Request) {
       null
     );
 
-    const complianceResult = await withTimeout(
+    const complianceResultRaw = await withTimeout(
       (async () => {
         try {
           return checkCompliance(
@@ -640,6 +640,7 @@ export async function GET(request: Request) {
       3000,
       { domain: domainDetails.hostname, gdpr: { name: 'GDPR', passed: false, score: 0, issues: [], recommendations: [] }, pciDss: { name: 'PCI-DSS', passed: false, score: 0, issues: [], recommendations: [] }, hipaa: { name: 'HIPAA', passed: false, score: 0, issues: [], recommendations: [] }, overallScore: 0, overallStatus: 'non-compliant' }
     );
+    const complianceResult = (complianceResultRaw as any) || { domain: domainDetails.hostname, gdpr: { name: 'GDPR', passed: false, score: 0, issues: [], recommendations: [] }, pciDss: { name: 'PCI-DSS', passed: false, score: 0, issues: [], recommendations: [] }, hipaa: { name: 'HIPAA', passed: false, score: 0, issues: [], recommendations: [] }, overallScore: 0, overallStatus: 'non-compliant' };
 
     const penetrationTestingResult = await withTimeout(
       (async () => {
