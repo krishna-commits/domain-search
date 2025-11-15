@@ -66,13 +66,17 @@ export async function monitorDomain(
   // Detect changes
   if (previousScan) {
     // Security score changes
-    if (currentScan.securityScore !== previousScan.securityScore) {
-      const diff = currentScan.securityScore - previousScan.securityScore;
+    if (currentScan.securityScore !== undefined && 
+        previousScan.securityScore !== undefined && 
+        currentScan.securityScore !== previousScan.securityScore) {
+      const currentScore = currentScan.securityScore;
+      const previousScore = previousScan.securityScore;
+      const diff = currentScore - previousScore;
       changes.push({
         type: 'security_score',
         field: 'securityScore',
-        oldValue: previousScan.securityScore,
-        newValue: currentScan.securityScore,
+        oldValue: previousScore,
+        newValue: currentScore,
         severity: diff < -10 ? 'high' : diff < -5 ? 'medium' : 'low',
       });
 
@@ -126,10 +130,12 @@ export async function monitorDomain(
 
   // Determine status
   let status: 'healthy' | 'warning' | 'critical' = 'healthy';
-  if (currentScan.securityScore < 60) {
-    status = 'critical';
-  } else if (currentScan.securityScore < 80) {
-    status = 'warning';
+  if (currentScan.securityScore !== undefined) {
+    if (currentScan.securityScore < 60) {
+      status = 'critical';
+    } else if (currentScan.securityScore < 80) {
+      status = 'warning';
+    }
   }
 
   if (alerts.some(a => a.severity === 'critical')) {

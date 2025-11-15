@@ -73,7 +73,7 @@ export function performSEOSecurityChecks(html: string, metadata: any) {
         issues: [] as string[],
       },
       comments: {
-        count: (html.match(/<!--.*?-->/gs) || []).length,
+        count: (html.match(/<!--[\s\S]*?-->/g) || []).length,
         issues: [] as string[],
       },
     },
