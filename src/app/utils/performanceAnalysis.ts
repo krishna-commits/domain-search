@@ -111,7 +111,7 @@ function analyzeHTMLPerformance(html: string) {
   }
 
   // Count scripts
-  const scriptRegex = /<script[^>]*>(.*?)<\/script>/gis;
+  const scriptRegex = /<script[^>]*>([\s\S]*?)<\/script>/gi;
   while ((match = scriptRegex.exec(html)) !== null) {
     analysis.scripts.count++;
     const scriptHtml = match[0];
@@ -132,7 +132,7 @@ function analyzeHTMLPerformance(html: string) {
   }
 
   // Count inline styles
-  const styleRegex = /<style[^>]*>(.*?)<\/style>/gis;
+  const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
   while ((match = styleRegex.exec(html)) !== null) {
     analysis.inlineStyles.count++;
     analysis.inlineStyles.totalSize += match[1].length;

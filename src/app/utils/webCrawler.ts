@@ -234,7 +234,7 @@ function extractForms(html: string, baseUrl: string): Array<{
     method: string;
     inputs: Array<{ name: string; type: string; required: boolean }>;
   }> = [];
-  const formRegex = /<form[^>]*>(.*?)<\/form>/gis;
+  const formRegex = /<form[^>]*>([\s\S]*?)<\/form>/gi;
   let match;
 
   while ((match = formRegex.exec(html)) !== null) {
