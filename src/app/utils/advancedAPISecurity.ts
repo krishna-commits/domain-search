@@ -296,9 +296,9 @@ export async function testAdvancedAPISecurity(
 
   // JWT Detection in HTML/Headers
   const jwtPattern = /eyJ[A-Za-z0-9-_=]+\.eyJ[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*/g;
-  const jwtMatches = html.match(jwtPattern) || [];
+  const jwtMatches: string[] = html.match(jwtPattern) || [];
   const headerJWT = headers['authorization']?.match(/Bearer\s+(eyJ[A-Za-z0-9-_=]+\.eyJ[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*)/i);
-  if (headerJWT) jwtMatches.push(headerJWT[1]);
+  if (headerJWT && headerJWT[1]) jwtMatches.push(headerJWT[1]);
 
   for (const token of jwtMatches.slice(0, 5)) {
     try {

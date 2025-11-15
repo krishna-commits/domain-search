@@ -174,11 +174,13 @@ export default function Home() {
       const progressInterval = setInterval(() => {
         const currentStepIndex = steps.findIndex(s => s.status === 'in-progress' || s.status === 'pending');
         if (currentStepIndex >= 0 && currentStepIndex < steps.length) {
-          const currentStep = steps[currentStepIndex] as ScanStep;
+          const currentStep = steps[currentStepIndex];
+          if (!currentStep) return;
+          const stepProgress = (currentStep as ScanStep).progress;
           if (currentStep.status === 'pending') {
             updateProgress(currentStepIndex, 10);
-          } else if (currentStep.progress < 90) {
-            updateProgress(currentStepIndex, currentStep.progress + 10);
+          } else if (stepProgress < 90) {
+            updateProgress(currentStepIndex, stepProgress + 10);
           }
         }
       }, 500);
