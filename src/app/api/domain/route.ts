@@ -1182,7 +1182,7 @@ export async function GET(request: Request) {
     );
 
     // Compliance Frameworks
-    const compliance = await withTimeout(
+    const complianceFrameworks = await withTimeout(
       (async () => {
         try {
           return await assessCompliance(
@@ -1293,7 +1293,6 @@ export async function GET(request: Request) {
               wafDetection,
               advancedAuth,
               domainReputation,
-              compliance,
             };
 
     // Store historical record
@@ -1366,7 +1365,7 @@ export async function GET(request: Request) {
       wafDetection: wafDetection || null,
       advancedAuth: advancedAuth || null,
       domainReputation: domainReputation || null,
-      compliance: compliance || null,
+      compliance: complianceFrameworks || null,
       uptimeMonitoring: uptimeStats,
     };
 
