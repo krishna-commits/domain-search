@@ -593,7 +593,7 @@ export async function GET(request: Request) {
     const recommendations = generateRecommendations(securityData);
 
     // Calculate all async values first (can't use await in object literals)
-    const uptimeStats = await withTimeout(
+    const uptimeStatsRaw = await withTimeout(
       (async () => {
         try {
           const check = await performUptimeCheck(domainDetails.hostname);
@@ -606,6 +606,7 @@ export async function GET(request: Request) {
       10000,
       { domain: domainDetails.hostname, totalChecks: 0, upChecks: 0, downChecks: 0, slowChecks: 0, uptimePercentage: 0, averageResponseTime: 0, lastCheck: new Date(), lastStatus: 'down' }
     );
+    const uptimeStats = (uptimeStatsRaw as any) || { domain: domainDetails.hostname, totalChecks: 0, upChecks: 0, downChecks: 0, slowChecks: 0, uptimePercentage: 0, averageResponseTime: 0, lastCheck: new Date(), lastStatus: 'down' };
 
     const sslMonitoringResult = await withTimeout(
       (async () => {
