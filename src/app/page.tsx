@@ -145,7 +145,7 @@ export default function Home() {
         updatedSteps[stepIndex].progress = stepProgress;
         if (stepData) {
           updatedSteps[stepIndex].data = stepData;
-          setScanData(prev => ({ ...prev, ...stepData }));
+          setScanData((prev: any) => ({ ...prev, ...stepData }));
         }
         setScanSteps(updatedSteps);
         
@@ -286,18 +286,18 @@ export default function Home() {
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                  </div>
-                </div>
-                <div>
-                  <h1 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 dark:from-blue-400 dark:via-cyan-400 dark:to-teal-400 bg-clip-text text-transparent tracking-tight">
-                    Domain Security Scanner
-                  </h1>
-                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 uppercase tracking-wider">
-                    Enterprise Platform
-                  </p>
                 </div>
               </div>
-              <ThemeToggle />
+              <div>
+                  <h1 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 dark:from-blue-400 dark:via-cyan-400 dark:to-teal-400 bg-clip-text text-transparent tracking-tight">
+                  Domain Security Scanner
+                </h1>
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 uppercase tracking-wider">
+                    Enterprise Platform
+                </p>
+              </div>
+              </div>
+                <ThemeToggle />
             </div>
           </div>
         </header>
@@ -313,8 +313,8 @@ export default function Home() {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                 </span>
                 <span className="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider">Live Security Analysis</span>
-              </div>
-
+            </div>
+            
               <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 leading-none">
                 <span className="block bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-600 dark:from-blue-400 dark:via-cyan-300 dark:to-teal-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
                   Secure Your
@@ -349,9 +349,9 @@ export default function Home() {
                     </div>
                   </div>
                 ))}
-              </div>
             </div>
-          )}
+          </div>
+        )}
 
           {/* Main Search - Impressive Card */}
           {!loading && (
@@ -368,7 +368,7 @@ export default function Home() {
                 
                 <div className="relative z-10">
                   {!results && (
-                    <div className="text-center mb-8">
+                <div className="text-center mb-8">
                       <div className="inline-flex items-center justify-center w-20 h-20 mb-4 bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-300">
                         <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -381,8 +381,8 @@ export default function Home() {
                       </h2>
                       <p className="text-slate-600 dark:text-slate-400 font-medium">
                         Enter any domain to get instant comprehensive security analysis
-                      </p>
-                    </div>
+                  </p>
+                </div>
                   )}
                   <SearchBar onSearch={handleSearch} />
                 </div>
@@ -396,16 +396,16 @@ export default function Home() {
               {/* Scan Profile - Compact */}
               <div className="lg:col-span-4">
                 <div className="sticky top-24">
-                  <SectionCard title="Scan Profile" icon="⚙️" collapsible defaultExpanded={false}>
-                    <ScanProfileSelector
-                      selectedProfile={scanProfile}
-                      onProfileChange={setScanProfile}
-                      onCustomConfigChange={setCustomConfig}
-                      customConfig={customConfig}
-                    />
-                  </SectionCard>
+            <SectionCard title="Scan Profile" icon="⚙️" collapsible defaultExpanded={false}>
+              <ScanProfileSelector
+                selectedProfile={scanProfile}
+                onProfileChange={setScanProfile}
+                onCustomConfigChange={setCustomConfig}
+                customConfig={customConfig}
+              />
+            </SectionCard>
                 </div>
-              </div>
+          </div>
 
               {/* Scan Features - Expanded */}
               <div className="lg:col-span-8">
@@ -417,17 +417,17 @@ export default function Home() {
           {/* Recent Scans */}
           {!results && !loading && (
             <div className="mb-8">
-              <SectionCard title="Recent Scans" icon="📊">
-                <Dashboard onDomainSelect={(domain) => {
-                  setResults(null);
-                  handleSearch(domain);
-                }} />
-              </SectionCard>
+            <SectionCard title="Recent Scans" icon="📊">
+              <Dashboard onDomainSelect={(domain) => {
+                setResults(null);
+                handleSearch(domain);
+              }} />
+            </SectionCard>
             </div>
           )}
 
           {/* Loading State - Prominent Display with Detailed Progress */}
-          {loading && (
+        {loading && (
             <div className="space-y-8 animate-scale-in">
               <DetailedProgressIndicator
                 progress={progress}
@@ -437,9 +437,9 @@ export default function Home() {
               />
               
               {/* Skeleton Loader */}
-              <SkeletonLoader />
-            </div>
-          )}
+            <SkeletonLoader />
+          </div>
+        )}
 
           {/* Error State */}
           {error && (
@@ -449,12 +449,12 @@ export default function Home() {
                   <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                </div>
+                    </div>
                 <p className="text-red-700 dark:text-red-300 font-semibold">{error}</p>
-              </div>
-            </div>
-          )}
-
+                      </div>
+                    </div>
+                  )}
+                  
           {/* Results */}
           {results && (
             <ResultsDisplay 
@@ -463,24 +463,24 @@ export default function Home() {
               activeSection={activeSection}
               setActiveSection={setActiveSection}
             />
-          )}
+        )}
         </main>
 
         {/* Modern Footer */}
         <footer className="relative mt-24 border-t border-slate-200/60 dark:border-slate-800/60">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-50/50 to-slate-100/50 dark:via-slate-900/50 dark:to-slate-950/50"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 rounded-lg"></div>
                   <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Domain Security</h3>
                 </div>
                 <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                   Enterprise-grade security analysis platform with comprehensive scanning capabilities and real-time monitoring.
-                </p>
-              </div>
-              <div>
+              </p>
+            </div>
+            <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">Capabilities</h3>
                 <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                   {['DNS Security', 'SSL/TLS Analysis', 'Vulnerability Detection', 'Threat Intelligence'].map((item, i) => (
@@ -491,20 +491,20 @@ export default function Home() {
                       {item}
                     </li>
                   ))}
-                </ul>
-              </div>
-              <div>
+              </ul>
+            </div>
+            <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">Information</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
                   © {new Date().getFullYear()} Domain Security Scanner
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-500">
                   Enterprise Security Analysis Platform
-                </p>
-              </div>
+              </p>
             </div>
           </div>
-        </footer>
+        </div>
+      </footer>
       </div>
     </div>
   );
