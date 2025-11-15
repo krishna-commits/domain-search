@@ -175,6 +175,7 @@ export default function Home() {
         const currentStepIndex = steps.findIndex(s => s.status === 'in-progress' || s.status === 'pending');
         if (currentStepIndex >= 0 && currentStepIndex < steps.length) {
           const currentStep = steps[currentStepIndex];
+          if (!currentStep) return;
           if (currentStep.status === 'pending') {
             updateProgress(currentStepIndex, 10);
           } else if (currentStep.progress < 90) {
