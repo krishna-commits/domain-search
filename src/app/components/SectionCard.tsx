@@ -2,6 +2,7 @@
 import React from 'react';
 
 interface SectionCardProps {
+  id?: string;
   title: string;
   icon?: string;
   children: React.ReactNode;
@@ -11,6 +12,7 @@ interface SectionCardProps {
 }
 
 export default function SectionCard({ 
+  id,
   title, 
   icon, 
   children, 
@@ -21,7 +23,7 @@ export default function SectionCard({
   const [isExpanded, setIsExpanded] = React.useState(defaultExpanded);
 
   return (
-    <div className={`relative group ${className}`}>
+    <div id={id} className={`relative group ${className}`}>
       {/* Glow effect */}
       <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-3xl blur opacity-0 group-hover:opacity-20 transition duration-500"></div>
       
