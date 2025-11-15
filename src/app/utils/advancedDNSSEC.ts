@@ -181,6 +181,7 @@ async function getDNSKEYRecords(domain: string): Promise<Array<{
     resolver.setServers(['8.8.8.8', '1.1.1.1']);
     
     const records = await resolver.resolve(domain, 'DNSKEY');
+    if (!Array.isArray(records)) return [];
     return records.map((record: any) => ({
       keyTag: record.keyTag || 0,
       algorithm: record.algorithm || 0,
