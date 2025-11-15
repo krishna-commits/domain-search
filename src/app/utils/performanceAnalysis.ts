@@ -20,6 +20,9 @@ export async function analyzePerformance(url: string) {
     const contentSize = Buffer.byteLength(content, 'utf8');
     const headers = response.headers;
 
+    // Analyze HTML content
+    const htmlAnalysis = analyzeHTMLPerformance(content);
+
     // Calculate performance metrics
     const metrics = {
       responseTime,
@@ -45,13 +48,10 @@ export async function analyzePerformance(url: string) {
       },
       performance: {
         grade: calculatePerformanceGrade(responseTime, contentSize),
-        recommendations: generatePerformanceRecommendations(responseTime, contentSize, headers),
+        recommendations: generatePerformanceRecommendations(responseTime, contentSize, headers as any),
       },
+      htmlAnalysis,
     };
-
-    // Analyze HTML content
-    const htmlAnalysis = analyzeHTMLPerformance(content);
-    metrics.htmlAnalysis = htmlAnalysis;
 
     return metrics;
   } catch (error: any) {
@@ -192,7 +192,7 @@ function calculatePerformanceGrade(responseTime: number, contentSize: number): s
 function generatePerformanceRecommendations(
   responseTime: number,
   contentSize: number,
-  headers: Headers
+  headers: any
 ): string[] {
   const recommendations: string[] = [];
 
