@@ -1,0 +1,96 @@
+# GitLab CI/CD Integration for Domain Security Scanning
+# 
+# This pipeline runs domain security scans on every commit
+# and blocks deployment if security score is below threshold
+
+stages:
+  - security
+  - deploy
+
+variables:
+  DOMAIN: "example.com"
+  SECURITY_THRESHOLD: "80"
+
+security-scan:
+  stage: security
+  image: node:20
+  script:
+    - |
+      # Install dependencies
+      npm install -g curl jq
+      
+      # Run domain security scan
+      echo "🔒 Running security scan for $DOMAIN..."
+      
+      # Use environment variable for scanner URL
+      SCANNER_URL="${SCANNER_URL:-http://localhost:3000}"
+      RESPONSE=$(curl -s -X GET "$SCANNER_URL/api/domain?domain=$DOMAIN" \
+        -H "Content-Type: application/json")
+      
+      # Extract security score
+      SCORE=$(echo $RESPONSE | jq -r '.securityScore')
+      RISK_LEVEL=$(echo $RESPONSE | jq -r '.riskAssessment.riskLevel')
+      
+      echo "Security Score: $SCORE/100"
+      echo "Risk Level: $RISK_LEVEL"
+      
+      # Save results as artifact
+      echo $RESPONSE > scan-results.json
+      
+      # Check threshold
+      if [ "$SCORE" -lt "$SECURITY_THRESHOLD" ]; then
+        echo "❌ Security score $SCORE is below threshold of $SECURITY_THRESHOLD"
+        echo "Blocking deployment due to security concerns"
+        exit 1
+      else
+        echo "✅ Security score meets requirements"
+      fi
+  artifacts:
+    when: always
+    paths:
+      - scan-results.json
+    reports:
+      junit: scan-results.json
+  only:
+    - main
+    - develop
+    - merge_requests
+
+security-report:
+  stage: security
+  image: node:20
+  script:
+    - |
+      # Generate security report
+      if [ -f scan-results.json ]; then
+        cat scan-results.json | jq '.'
+        
+        # Extract key metrics
+        SCORE=$(cat scan-results.json | jq -r '.securityScore')
+        RISK=$(cat scan-results.json | jq -r '.riskAssessment.riskLevel')
+        
+        echo "## Security Scan Summary" > security-report.md
+        echo "" >> security-report.md
+        echo "- **Security Score:** $SCORE/100" >> security-report.md
+        echo "- **Risk Level:** $RISK" >> security-report.md
+        echo "" >> security-report.md
+        echo "### Recommendations" >> security-report.md
+        cat scan-results.json | jq -r '.recommendations[]' | sed 's/^/- /' >> security-report.md
+      fi
+  artifacts:
+    paths:
+      - security-report.md
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying application..."
+    # Your deployment script here
+  only:
+    - main
+  when: on_success
+

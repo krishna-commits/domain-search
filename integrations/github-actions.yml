@@ -1,0 +1,106 @@
+name: Domain Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    name: Domain Security Scan
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run domain security scan
+        id: scan
+        run: |
+          # Replace with your domain
+          DOMAIN="example.com"
+          
+          # Run scan via API (use environment variable for production URL)
+          SCANNER_URL="${SCANNER_URL:-http://localhost:3000}"
+          RESPONSE=$(curl -X GET "$SCANNER_URL/api/domain?domain=$DOMAIN" \
+            -H "Content-Type: application/json")
+          
+          # Extract security score
+          SCORE=$(echo $RESPONSE | jq -r '.securityScore')
+          
+          # Save results
+          echo $RESPONSE > scan-results.json
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+          
+          # Check if score is below threshold
+          if [ "$SCORE" -lt 80 ]; then
+            echo "Security score $SCORE is below threshold of 80"
+            exit 1
+          fi
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: security-scan-results
+          path: scan-results.json
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('scan-results.json', 'utf8'));
+            
+            const score = results.securityScore || 0;
+            const riskLevel = results.riskAssessment?.riskLevel || 'unknown';
+            
+            const comment = `## 🔒 Domain Security Scan Results
+            
+            **Domain:** ${results.domainDetails?.hostname || 'N/A'}
+            **Security Score:** ${score}/100
+            **Risk Level:** ${riskLevel.toUpperCase()}
+            
+            ${score < 80 ? '⚠️ **Warning:** Security score is below recommended threshold (80)' : '✅ Security score meets requirements'}
+            
+            <details>
+            <summary>View Full Report</summary>
+            
+            \`\`\`json
+            ${JSON.stringify(results, null, 2)}
+            \`\`\`
+            </details>
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Notify on failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'Domain security scan failed!'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
