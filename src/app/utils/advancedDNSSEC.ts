@@ -213,6 +213,7 @@ async function getRRSIGRecords(domain: string): Promise<Array<{
     resolver.setServers(['8.8.8.8', '1.1.1.1']);
     
     const records = await resolver.resolve(domain, 'RRSIG');
+    if (!Array.isArray(records)) return [];
     return records.map((record: any) => ({
       type: record.typeCovered || '',
       algorithm: record.algorithm || 0,
@@ -241,6 +242,7 @@ async function getNSECRecords(domain: string): Promise<Array<{
     resolver.setServers(['8.8.8.8', '1.1.1.1']);
     
     const records = await resolver.resolve(domain, 'NSEC');
+    if (!Array.isArray(records)) return [];
     return records.map((record: any) => ({
       nextDomainName: record.nextDomainName || '',
       types: record.types || [],
@@ -266,6 +268,7 @@ async function getNSEC3Records(domain: string): Promise<Array<{
     resolver.setServers(['8.8.8.8', '1.1.1.1']);
     
     const records = await resolver.resolve(domain, 'NSEC3');
+    if (!Array.isArray(records)) return [];
     return records.map((record: any) => ({
       hashAlgorithm: record.hashAlgorithm || 0,
       flags: record.flags || 0,
