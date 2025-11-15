@@ -427,7 +427,7 @@ export function analyzeWebsiteStructure(crawlResults: any[]) {
     }
 
     // Collect all links
-    result.links.forEach(link => allLinks.add(link));
+    result.links.forEach((link: string) => allLinks.add(link));
   });
 
   structure.averageLinksPerPage = crawlResults.length > 0 ? totalLinks / crawlResults.length : 0;

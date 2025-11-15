@@ -23,7 +23,7 @@ export function analyzeJavaScript(html: string, scripts: string[]) {
   };
 
   // Analyze inline scripts
-  const inlineScriptRegex = /<script[^>]*>(.*?)<\/script>/gis;
+  const inlineScriptRegex = /<script[^>]*>([\s\S]*?)<\/script>/gi;
   let match;
   while ((match = inlineScriptRegex.exec(html)) !== null) {
     if (!match[0].includes('src=')) {
