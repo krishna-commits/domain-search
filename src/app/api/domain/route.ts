@@ -560,7 +560,7 @@ export async function GET(request: Request) {
               }),
               3000,
               { geolocation: { success: false }, asn: { success: false }, virusTotal: { success: false }, abuseIPDB: { success: false }, blacklists: { blacklists: [] }, reputationScore: 50 }
-            );
+            ) as any;
             ipReputations.push({ ip, ...ipRep });
           }
         } catch {
