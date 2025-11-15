@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 
-interface SectionCardProps {
+export interface SectionCardProps {
   id?: string;
   title: string;
   icon?: string;
