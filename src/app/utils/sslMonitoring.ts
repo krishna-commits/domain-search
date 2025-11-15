@@ -30,7 +30,8 @@ export async function checkSSLExpiration(domain: string): Promise<SSLCertInfo | 
       };
 
       const req = https.request(options, (res) => {
-        const cert = res.socket.getPeerCertificate(true);
+        const socket = res.socket as any;
+        const cert = socket.getPeerCertificate ? socket.getPeerCertificate(true) : null;
         
         if (!cert || !cert.valid_to) {
           resolve(null);
