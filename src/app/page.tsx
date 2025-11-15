@@ -77,6 +77,8 @@ type ScanStepStatus = 'pending' | 'in-progress' | 'completed' | 'error';
 type ScanStep = {
   name: string;
   status: ScanStepStatus;
+  progress?: number;
+  data?: any;
 };
 
 export default function Home() {
